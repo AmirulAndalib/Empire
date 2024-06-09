@@ -211,18 +211,22 @@ class Listener:
                 self.options["DefaultDelay"] = {
                     "Description": "Agent delay/reach back interval (in seconds).",
                     "Required": False,
-                    "Value": int(int(profile.sleeptime) / 1000)
-                    if hasattr(profile, "sleeptime")
-                    else 5,
+                    "Value": (
+                        int(int(profile.sleeptime) / 1000)
+                        if hasattr(profile, "sleeptime")
+                        else 5
+                    ),
                 }
 
                 # grab jitter from profile
                 self.options["DefaultJitter"] = {
                     "Description": "Jitter in agent reachback interval (0.0-1.0).",
                     "Required": True,
-                    "Value": float(profile.jitter) / 100
-                    if hasattr(profile, "jitter")
-                    else 0.0,
+                    "Value": (
+                        float(profile.jitter) / 100
+                        if hasattr(profile, "jitter")
+                        else 0.0
+                    ),
                 }
 
                 # eliminate troublesome headers
@@ -437,7 +441,9 @@ class Listener:
                     launcherBase,
                     obfuscation_command=obfuscation_command,
                 )
-                stager = self.mainMenu.obfuscationv2.obfuscate_keywords(stager)
+                launcherBase = self.mainMenu.obfuscationv2.obfuscate_keywords(
+                    launcherBase
+                )
 
             if encode and (
                 (not obfuscate) or ("launcher" not in obfuscation_command.lower())
@@ -765,9 +771,6 @@ class Listener:
             # read in agent code
             with open(self.mainMenu.installPath + "/data/agent/agent.ps1") as f:
                 code = f.read()
-
-            # Get the random function name generated at install and patch the stager with the proper function name
-            code = self.mainMenu.obfuscationv2.obfuscate_keywords(code)
 
             # strip out the comments and blank lines
             code = helpers.strip_powershell_comments(code)
@@ -1482,12 +1485,16 @@ class ExtendedPacketHandler(PacketHandler):
                                             stager = self.generate_stager(
                                                 language=language,
                                                 listenerOptions=listenerOptions,
-                                                obfuscate=False
-                                                if not obf_config
-                                                else obf_config.enabled,
-                                                obfuscation_command=""
-                                                if not obf_config
-                                                else obf_config.command,
+                                                obfuscate=(
+                                                    False
+                                                    if not obf_config
+                                                    else obf_config.enabled
+                                                ),
+                                                obfuscation_command=(
+                                                    ""
+                                                    if not obf_config
+                                                    else obf_config.command
+                                                ),
                                             )
 
                                         # build malleable response with stager (stage 1)
@@ -1575,12 +1582,16 @@ class ExtendedPacketHandler(PacketHandler):
                                                     if tempListenerOptions
                                                     else listenerOptions
                                                 ),
-                                                obfuscate=False
-                                                if not obf_config
-                                                else obf_config.enabled,
-                                                obfuscation_command=""
-                                                if not obf_config
-                                                else obf_config.command,
+                                                obfuscate=(
+                                                    False
+                                                    if not obf_config
+                                                    else obf_config.enabled
+                                                ),
+                                                obfuscation_command=(
+                                                    ""
+                                                    if not obf_config
+                                                    else obf_config.command
+                                                ),
                                                 version=version,
                                             )
 
